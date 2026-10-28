@@ -227,7 +227,7 @@ p{text-wrap:pretty}
 
 /* ========== SPEAKERS ========== */
 .speakers{background:var(--paper-2)}
-.spk{display:grid;grid-template-columns:repeat(2,minmax(0,300px));justify-content:center;gap:clamp(16px,3vw,32px);margin-top:48px}
+.spk{display:grid;grid-template-columns:repeat(3,minmax(0,290px));justify-content:center;gap:clamp(14px,2.6vw,28px);margin-top:48px}
 /* subgrid: photo, name, role and logo rows share heights across cards, so text lines up however it wraps */
 .fcard{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
 .fcard:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
@@ -244,6 +244,8 @@ p{text-wrap:pretty}
 .fcard__logo img{max-height:26px;max-width:120px;width:auto;object-fit:contain}
 @media(max-width:560px){
   .spk{grid-template-columns:1fr 1fr;gap:12px}
+  /* host card centred on its own row, speakers side by side below */
+  .spk .fcard:first-child{grid-column:1 / -1;justify-self:center;width:calc(50% - 6px)}
   .fcard__nm{font-size:17px;padding:14px 14px 0}
   .fcard__role{font-size:13px;padding:4px 14px 0}
   .fcard__logo{height:40px;margin:12px 14px 16px;padding-top:12px}
@@ -416,10 +418,18 @@ p{text-wrap:pretty}
 <section class="section speakers">
   <div class="container">
     <div class="shead reveal">
-      <span class="kicker">Your speakers</span>
+      <span class="kicker">Your host &amp; speakers</span>
       <h2 class="h-lg">Hear it from <span class="g">Delta and Shopify.</span></h2>
     </div>
     <div class="spk reveal">
+      <article class="fcard">
+        <div class="fcard__ph"><span class="fcard__badge">Host</span><img src="assets/host-suri.jpg" alt="Suri Leitner"></div>
+        <div class="fcard__b">
+          <p class="fcard__nm">Suri Leitner</p>
+          <p class="fcard__role">Business Development Manager, Delta Fulfilment</p>
+          <div class="fcard__logo"><img src="assets/logo-dark.png" alt="Delta Fulfilment"></div>
+        </div>
+      </article>
       <article class="fcard">
         <div class="fcard__ph"><img src="assets/founder-dani.jpg" alt="Dani Mechlowitz"></div>
         <div class="fcard__b">
