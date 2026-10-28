@@ -138,32 +138,15 @@ p{text-wrap:pretty}
 .formcard__kick{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(0,0,0,.62)}
 .formcard__title{font:600 25px/1.12 var(--display);letter-spacing:-.02em;margin-top:8px;color:#1c1c1c}
 .formcard__title b{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-form{padding:22px 30px 26px}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 14px}
-.field{display:flex;flex-direction:column;gap:7px}
-.field.full{grid-column:1 / -1}
-.field label{font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
-.req{color:var(--blue)}
-.field input,.field select{font-family:var(--body);font-size:15px;color:var(--ink);background:var(--paper-2);border:1.5px solid var(--line);border-radius:var(--r-sm);padding:11px 13px;width:100%;transition:border-color .2s,box-shadow .2s,background .2s}
-.field select{appearance:none;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:17px;cursor:pointer}
-.field input:focus,.field select:focus{outline:none;border-color:var(--blue);background-color:#fff;box-shadow:0 0 0 4px rgba(43,124,255,.12)}
-.field input::placeholder{color:var(--ink-3)}
-.field input:user-invalid,.field select:user-invalid{border-color:#d64545}
-.consent{grid-column:1 / -1;display:flex;gap:11px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--ink-2);margin-top:2px;cursor:pointer}
-.consent input{flex:none;width:18px;height:18px;margin-top:2px;accent-color:var(--blue);cursor:pointer}
-.consent a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
-.submit{margin-top:18px}
-.submit .btn{width:100%}
-.form-err{display:none;margin-top:12px;font-size:14px;color:#d64545;text-align:center}
-.form-err.show{display:block}
+/* register panel: how it works + button that opens the Luma pop-up */
+.regpanel{padding:24px 30px 26px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:16px}
+.steps li{display:flex;gap:14px;align-items:flex-start}
+.steps__n{flex:none;width:32px;height:32px;border-radius:50%;background:var(--grad-soft);display:grid;place-items:center;font:600 14px/1 var(--mono);color:var(--blue)}
+.steps b{display:block;font:600 17px/1.25 var(--display);letter-spacing:-.01em}
+.steps span:not(.steps__n){display:block;margin-top:2px;font-size:14.5px;color:var(--ink-2);line-height:1.4}
+.regpanel__btn{width:100%;margin-top:24px}
 .form-foot{margin-top:12px;text-align:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-3)}
-.thanks{display:none;flex-direction:column;align-items:center;text-align:center;padding:54px 32px 56px}
-.formcard.done .thanks{display:flex}
-.formcard.done form,.formcard.done .formcard__head{display:none}
-.tick{width:72px;height:72px;border-radius:50%;background:var(--grad);display:grid;place-items:center;margin-bottom:22px}
-.tick svg{width:34px;height:34px;stroke:#06210f;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.thanks h2{font-size:26px;letter-spacing:-.02em}
-.thanks p{margin-top:12px;font-size:15.5px;color:var(--ink-2);max-width:36ch}
 
 @media(max-width:920px){
   .hero__grid{grid-template-columns:1fr}
@@ -190,8 +173,8 @@ form{padding:22px 30px 26px}
   .feat{border-radius:var(--r);padding-right:16px}
   .cobrand .delta{height:32px}
   .cobrand .shop{height:24px}
-  .fgrid{grid-template-columns:1fr}
-  form,.formcard__head{padding-left:20px;padding-right:20px}
+
+  .regpanel,.formcard__head{padding-left:20px;padding-right:20px}
   .cd__units{gap:14px}
   .cd__u b{font-size:28px}
 }
@@ -375,42 +358,17 @@ form{padding:22px 30px 26px}
         <span class="formcard__kick">Delta Connect × Shopify</span>
         <h2 class="formcard__title">Save your spot. <b>It's free.</b></h2>
       </div>
-      <!-- Netlify Forms picks this form up at deploy time; submissions appear under Forms → webinar-registration -->
-      <form id="regForm" name="webinar-registration" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
-        <input type="hidden" name="form-name" value="webinar-registration">
-        <input type="hidden" name="consent_text" value="">
-        <p hidden><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-        <div class="fgrid">
-          <div class="field">
-            <label for="f_first">First name <span class="req">*</span></label>
-            <input id="f_first" name="first_name" type="text" autocomplete="given-name" placeholder="Jane" required>
-          </div>
-          <div class="field">
-            <label for="f_last">Last name <span class="req">*</span></label>
-            <input id="f_last" name="last_name" type="text" autocomplete="family-name" placeholder="Doe" required>
-          </div>
-          <div class="field full">
-            <label for="f_email">Work email <span class="req">*</span></label>
-            <input id="f_email" name="email" type="email" autocomplete="email" placeholder="jane@acmebrands.com" required>
-          </div>
-          <div class="field full">
-            <label for="f_company">Company</label>
-            <input id="f_company" name="company" type="text" autocomplete="organization" placeholder="Acme Brands">
-          </div>
-          <!-- Consent names both organisers (UK GDPR). Wording to be signed off by Delta. -->
-          <label class="consent">
-            <input type="checkbox" name="consent" value="yes" required>
-            <span>I agree that Delta Fulfilment and Shopify may use my details to send me information about this webinar and related services. I can unsubscribe at any time. See the <a href="https://www.deltafulfilment.co.uk/privacy-policy" target="_blank" rel="noopener">Delta Fulfilment</a> and <a href="https://www.shopify.com/legal/privacy" target="_blank" rel="noopener">Shopify</a> privacy policies. <span class="req">*</span></span>
-          </label>
-        </div>
-        <div class="submit"><button class="btn btn--grad btn--lg" type="submit">Register free <span class="arr">→</span></button></div>
-        <p class="form-err" id="formErr" role="alert">Something went wrong. Please try again.</p>
-        <p class="form-foot">Places are confirmed by email with your Teams joining link</p>
-      </form>
-      <div class="thanks" role="status">
-        <div class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4 10-12"/></svg></div>
-        <h2>Thanks for registering</h2>
-        <p>We review every registration. Once your place is confirmed, you'll receive your Microsoft Teams joining link by email ahead of <span data-ev="date"></span>.</p>
+      <!-- Registration runs on Luma (approval on). Every register button carries data-luma-action="checkout"
+           plus the event id, which makes Luma's script open its form as a pop-up over this page.
+           Without JS the button falls back to the Luma event page. -->
+      <div class="regpanel">
+        <ol class="steps">
+          <li><span class="steps__n">1</span><div><b>Register in under a minute</b><span>Name, email and company. That's it.</span></div></li>
+          <li><span class="steps__n">2</span><div><b>We confirm your place</b><span>The Delta team reviews every registration.</span></div></li>
+          <li><span class="steps__n">3</span><div><b>Get your joining link</b><span>We email your Teams link and a calendar invite.</span></div></li>
+        </ol>
+        <a class="btn btn--grad btn--lg regpanel__btn" data-luma-action="checkout" data-luma-event-id="evt-slx1Rl5kYydiwJX" href="https://luma.com/91oz6jq6" target="_blank" rel="noopener">Register free <span class="arr">→</span></a>
+        <p class="form-foot">Free · Online · Microsoft Teams</p>
       </div>
     </div>
   </div>
@@ -483,7 +441,7 @@ form{padding:22px 30px 26px}
     <svg class="fcta__mk reveal" viewBox="0 0 128 68" style="--mi:#fff" aria-hidden="true"><use href="#link"/></svg>
     <h2 class="h-lg reveal">Make this peak your <span class="g">best subscriber season.</span></h2>
     <p class="reveal">Free, online and live. Can't make it? Register anyway and we'll send you the recording.</p>
-    <a href="#register" class="btn btn--grad btn--lg reveal">Save my spot <span class="arr">→</span></a>
+    <a href="https://luma.com/91oz6jq6" data-luma-action="checkout" data-luma-event-id="evt-slx1Rl5kYydiwJX" target="_blank" rel="noopener" class="btn btn--grad btn--lg reveal">Save my spot <span class="arr">→</span></a>
     <div class="cobrand reveal" aria-label="Delta Fulfilment and Shopify">
       <img class="delta" src="assets/logo-light.png" alt="Delta Fulfilment">
       <span class="x" aria-hidden="true">×</span>
@@ -495,7 +453,7 @@ form{padding:22px 30px 26px}
 
 <div class="stickybar off" id="stickybar">
   <div class="stickybar__txt"><b>Delta Connect Live</b><span><span data-ev="short"></span> · <span data-ev="time"></span></span></div>
-  <a href="#register" class="btn btn--grad">Register free</a>
+  <a href="https://luma.com/91oz6jq6" data-luma-action="checkout" data-luma-event-id="evt-slx1Rl5kYydiwJX" target="_blank" rel="noopener" class="btn btn--grad">Register free</a>
 </div>
 
 <footer class="foot">
@@ -525,9 +483,8 @@ const EVENT = {
   startISO: "2026-11-04T14:00:00Z",   // 2pm UK (GMT in November) — drives the countdown
   timeLabel: "2pm – 3pm"              // "UK time" is added next to it on the page
 };
-// Registrations are saved by Netlify Forms (see the form's data-netlify attribute).
-// Each one is approved by Delta, who then email the Teams joining link — the link is
-// deliberately NOT on this page. On localhost nothing is sent; the thank-you step still shows.
+// Registration, approval and the joining-link emails are handled by Luma: https://luma.com/91oz6jq6
+// (event id evt-slx1Rl5kYydiwJX on each register button). The Teams link is never on this page.
 
 (function(){
   const fill = {date:EVENT.dateLabel, time:EVENT.timeLabel, long:EVENT.dateLong, mon:EVENT.monthShort, day:EVENT.dayNum,
@@ -550,40 +507,13 @@ const EVENT = {
     setTimeout(tick, 1000);
   })();
 
-  /* registration */
-  const form = document.getElementById('regForm');
-  const card = document.getElementById('register');
-  const err  = document.getElementById('formErr');
-  const btn  = form.querySelector('button[type="submit"]');
-  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
-  form.addEventListener('submit', async e=>{
-    e.preventDefault();
-    err.classList.remove('show');
-    if(!form.reportValidity()) return;
-    form.consent_text.value = form.querySelector('.consent span').innerText.trim();
-    btn.disabled = true;
-    try{
-      if(!local){
-        const r = await fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(new FormData(form)).toString()});
-        if(!r.ok) throw new Error(r.status);
-      }
-      card.classList.add('done');
-      card.scrollIntoView({block:'center'});
-      form.reset();
-    }catch(_){
-      err.classList.add('show');
-    }finally{
-      btn.disabled = false;
-    }
-  });
-
-  /* sticky register bar: show once past the hero copy, hide while the form or final CTA is visible */
+  /* sticky register bar: show once past the hero copy, hide while the register card or final CTA is visible */
   const bar = document.getElementById('stickybar');
-  const watch = [document.querySelector('.hero__copy'), card, document.querySelector('.fcta')];
+  const watch = [document.querySelector('.hero__copy'), document.getElementById('register'), document.querySelector('.fcta')];
   const seen = new Set();
   const barIO = new IntersectionObserver(es=>{
     es.forEach(e=>e.isIntersecting ? seen.add(e.target) : seen.delete(e.target));
-    bar.classList.toggle('off', seen.size > 0 || card.classList.contains('done'));
+    bar.classList.toggle('off', seen.size > 0);
   });
   watch.forEach(el=>barIO.observe(el));
 
@@ -597,5 +527,7 @@ const EVENT = {
   });
 })();
 </script>
+<!-- Luma registration pop-up (the id is required: the script reads its own origin from it) -->
+<script id="luma-checkout" src="https://embed.lu.ma/checkout-button.js"></script>
 </body>
 </html>
