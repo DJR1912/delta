@@ -164,9 +164,6 @@ form{padding:22px 30px 26px}
 .tick svg{width:34px;height:34px;stroke:#06210f;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .thanks h2{font-size:26px;letter-spacing:-.02em}
 .thanks p{margin-top:12px;font-size:15.5px;color:var(--ink-2);max-width:36ch}
-.thanks__cta{margin-top:24px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
-.thanks__cta .btn--ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
-.thanks__cta .btn--ghost:hover{border-color:var(--ink);box-shadow:none}
 
 @media(max-width:920px){
   .hero__grid{grid-template-columns:1fr}
@@ -408,16 +405,12 @@ form{padding:22px 30px 26px}
         </div>
         <div class="submit"><button class="btn btn--grad btn--lg" type="submit">Register free <span class="arr">→</span></button></div>
         <p class="form-err" id="formErr" role="alert">Something went wrong. Please try again.</p>
-        <p class="form-foot" id="formFoot">Your Teams joining link comes straight after you register</p>
+        <p class="form-foot">Places are confirmed by email with your Teams joining link</p>
       </form>
       <div class="thanks" role="status">
         <div class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4 10-12"/></svg></div>
-        <h2>You're registered</h2>
-        <p id="thanksMsg">Add the webinar to your calendar. The invite has the Teams joining link and a reminder, so you won't miss it on <span data-ev="date"></span>.</p>
-        <div class="thanks__cta">
-          <button class="btn btn--grad" type="button" id="icsBtn">Add to calendar <span class="arr">→</span></button>
-          <a class="btn btn--ghost" id="joinBtn" href="#" target="_blank" rel="noopener">Teams joining link</a>
-        </div>
+        <h2>Thanks for registering</h2>
+        <p>We review every registration. Once your place is confirmed, you'll receive your Microsoft Teams joining link by email ahead of <span data-ev="date"></span>.</p>
       </div>
     </div>
   </div>
@@ -529,16 +522,12 @@ const EVENT = {
   dateLong: "Wednesday 4 November",     // date block in the hero
   monthShort: "Nov",
   dayNum: "4",
-  startISO: "2026-11-04T14:00:00Z",   // 2pm UK (GMT in November)
-  timeConfirmed: true,                // false → calendar file is an all-day event
-  timeLabel: "2pm – 3pm",             // "UK time" is added next to it on the page
-  durationMins: 60,
-  // Teams joining link: shown after registering and put in the calendar invite. MUST be set before launch.
-  joinUrl: "https://teams.microsoft.com/meet/3226121524957016?p=egdTcrQuigc2U11Wzr",
-  reminderMins: 30                    // calendar alert this long before the start
+  startISO: "2026-11-04T14:00:00Z",   // 2pm UK (GMT in November) — drives the countdown
+  timeLabel: "2pm – 3pm"              // "UK time" is added next to it on the page
 };
 // Registrations are saved by Netlify Forms (see the form's data-netlify attribute).
-// On localhost nothing is sent; the thank-you step still shows so the flow can be tested.
+// Each one is approved by Delta, who then email the Teams joining link — the link is
+// deliberately NOT on this page. On localhost nothing is sent; the thank-you step still shows.
 
 (function(){
   const fill = {date:EVENT.dateLabel, time:EVENT.timeLabel, long:EVENT.dateLong, mon:EVENT.monthShort, day:EVENT.dayNum,
@@ -567,15 +556,6 @@ const EVENT = {
   const err  = document.getElementById('formErr');
   const btn  = form.querySelector('button[type="submit"]');
   const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
-  const joinBtn = document.getElementById('joinBtn');
-  if(EVENT.joinUrl){
-    joinBtn.href = EVENT.joinUrl;
-  }else{
-    // No link yet: don't promise one on screen
-    joinBtn.hidden = true;
-    document.getElementById('formFoot').textContent = 'Free · Online · Microsoft Teams';
-    document.getElementById('thanksMsg').innerHTML = 'Add the webinar to your calendar so you don\'t miss it on <span>'+EVENT.dateLabel+'</span>. We\'ll email your Teams joining link before we go live.';
-  }
   form.addEventListener('submit', async e=>{
     e.preventDefault();
     err.classList.remove('show');
@@ -595,33 +575,6 @@ const EVENT = {
     }finally{
       btn.disabled = false;
     }
-  });
-
-  /* add to calendar (.ics) */
-  document.getElementById('icsBtn').addEventListener('click', ()=>{
-    const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-    const ymd = d => d.toISOString().slice(0,10).replace(/-/g,'');
-    const s = new Date(EVENT.startISO);
-    const e = new Date(s.getTime() + EVENT.durationMins*60000);
-    const allDay = !EVENT.timeConfirmed;
-    const ics = [
-      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Delta Fulfilment//Webinar//EN','BEGIN:VEVENT',
-      'UID:bfcm-webinar-'+s.getTime()+'@deltafulfilment.co.uk',
-      'DTSTAMP:'+fmt(new Date()),
-      allDay ? 'DTSTART;VALUE=DATE:'+ymd(s) : 'DTSTART:'+fmt(s),
-      allDay ? 'DTEND;VALUE=DATE:'+ymd(new Date(s.getTime()+86400000)) : 'DTEND:'+fmt(e),
-      'SUMMARY:'+EVENT.title,
-      'DESCRIPTION:A Delta Connect session with Shopify.'+(EVENT.joinUrl?'\\n\\nJoin on Microsoft Teams: '+EVENT.joinUrl:'\\n\\nThe Teams joining link will be emailed before the session.'),
-      'LOCATION:'+(EVENT.joinUrl||'Online · Microsoft Teams'),
-      ...(EVENT.joinUrl ? ['URL:'+EVENT.joinUrl] : []),
-      'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+EVENT.title,'TRIGGER:-PT'+EVENT.reminderMins+'M','END:VALARM',
-      'END:VEVENT','END:VCALENDAR'
-    ].join('\r\n');
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
-    a.download = 'delta-shopify-webinar.ics';
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
   });
 
   /* sticky register bar: show once past the hero copy, hide while the form or final CTA is visible */
