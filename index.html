@@ -280,6 +280,11 @@ p{text-wrap:pretty}
 .foot a{color:rgba(255,255,255,.72);text-decoration:underline;text-underline-offset:2px}
 .foot a:hover{color:#fff}
 .foot nav{display:flex;gap:18px;flex-wrap:wrap}
+.foot .foot__powered{justify-content:center;gap:14px;margin-top:22px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1)}
+.foot__powered .lab{font:500 11.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.foot__powered a{text-decoration:none;display:block}
+.foot__powered img{height:36px;width:auto;opacity:.9;transition:opacity .2s}
+.foot__powered a:hover img{opacity:1}
 
 /* reveal */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
@@ -467,6 +472,10 @@ p{text-wrap:pretty}
       <a href="https://www.deltafulfilment.co.uk/privacy-policy" target="_blank" rel="noopener">Privacy</a>
       <a href="mailto:connect@deltafulfilment.com">Contact</a>
     </nav>
+  </div>
+  <div class="container foot__powered">
+    <span class="lab">Powered by</span>
+    <a href="https://www.deltafulfilment.co.uk" target="_blank" rel="noopener" aria-label="Delta Fulfilment"><img src="assets/logo-light.png" alt="Delta Fulfilment"></a>
   </div>
 </footer>
 
