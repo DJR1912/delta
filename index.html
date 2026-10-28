@@ -48,6 +48,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.02;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
 p{text-wrap:pretty}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+[hidden]{display:none !important}
 .container{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
 .section{padding-block:clamp(64px,8vw,112px)}
 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -148,7 +149,9 @@ form{padding:22px 30px 26px}
 .tick svg{width:34px;height:34px;stroke:#06210f;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .thanks h2{font-size:26px;letter-spacing:-.02em}
 .thanks p{margin-top:12px;font-size:15.5px;color:var(--ink-2);max-width:36ch}
-.thanks .btn{margin-top:24px}
+.thanks__cta{margin-top:24px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
+.thanks__cta .btn--ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.thanks__cta .btn--ghost:hover{border-color:var(--ink);box-shadow:none}
 
 @media(max-width:920px){
   .hero__grid{grid-template-columns:1fr}
@@ -311,7 +314,11 @@ form{padding:22px 30px 26px}
         <span class="formcard__kick">Delta Connect × Shopify</span>
         <h2 class="formcard__title">Save your spot. <b>It's free.</b></h2>
       </div>
-      <form id="regForm" novalidate>
+      <!-- Netlify Forms picks this form up at deploy time; submissions appear under Forms → webinar-registration -->
+      <form id="regForm" name="webinar-registration" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="webinar-registration">
+        <input type="hidden" name="consent_text" value="">
+        <p hidden><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
         <div class="fgrid">
           <div class="field">
             <label for="f_first">First name <span class="req">*</span></label>
@@ -325,23 +332,9 @@ form{padding:22px 30px 26px}
             <label for="f_email">Work email <span class="req">*</span></label>
             <input id="f_email" name="email" type="email" autocomplete="email" placeholder="jane@acmebrands.com" required>
           </div>
-          <div class="field">
-            <label for="f_company">Company <span class="req">*</span></label>
-            <input id="f_company" name="company" type="text" autocomplete="organization" placeholder="Acme Brands" required>
-          </div>
-          <div class="field">
-            <label for="f_store">Shopify store URL</label>
-            <input id="f_store" name="store_url" type="text" inputmode="url" placeholder="acmebrands.com">
-          </div>
           <div class="field full">
-            <label for="f_volume">Monthly orders <span class="req">*</span></label>
-            <select id="f_volume" name="monthly_orders" required>
-              <option value="" disabled selected>Select a range</option>
-              <option>Under 500</option>
-              <option>500 – 2,000</option>
-              <option>2,000 – 10,000</option>
-              <option>10,000+</option>
-            </select>
+            <label for="f_company">Company</label>
+            <input id="f_company" name="company" type="text" autocomplete="organization" placeholder="Acme Brands">
           </div>
           <!-- Consent names both organisers (UK GDPR). Wording to be signed off by Delta. -->
           <label class="consent">
@@ -351,13 +344,16 @@ form{padding:22px 30px 26px}
         </div>
         <div class="submit"><button class="btn btn--grad btn--lg" type="submit">Register free <span class="arr">→</span></button></div>
         <p class="form-err" id="formErr" role="alert">Something went wrong. Please try again.</p>
-        <p class="form-foot">Joining link and recording sent by email</p>
+        <p class="form-foot" id="formFoot">Your Teams joining link comes straight after you register</p>
       </form>
       <div class="thanks" role="status">
         <div class="tick"><svg viewBox="0 0 24 24"><path d="M5 13l4 4 10-12"/></svg></div>
         <h2>You're registered</h2>
-        <p>We'll email your joining link and a reminder before we go live on <span data-ev="date"></span>.</p>
-        <button class="btn btn--grad" type="button" id="icsBtn">Add to calendar <span class="arr">→</span></button>
+        <p id="thanksMsg">Add the webinar to your calendar. The invite has the Teams joining link and a reminder, so you won't miss it on <span data-ev="date"></span>.</p>
+        <div class="thanks__cta">
+          <button class="btn btn--grad" type="button" id="icsBtn">Add to calendar <span class="arr">→</span></button>
+          <a class="btn btn--ghost" id="joinBtn" href="#" target="_blank" rel="noopener">Teams joining link</a>
+        </div>
       </div>
     </div>
   </div>
@@ -460,17 +456,18 @@ form{padding:22px 30px 26px}
    EVENT CONFIG — edit here; the page fills itself from this.
    ========================================================= */
 const EVENT = {
-  title: "Black Friday Buyers to Lifetime Subscribers — Delta Fulfilment × Shopify",
+  title: "Black Friday Buyers to Lifetime Subscribers — Delta Connect × Shopify",
   dateLabel: "Wed 4 November 2026",
   startISO: "2026-11-04T14:00:00Z",   // 2pm UK (GMT in November)
   timeConfirmed: true,                // false → calendar file is an all-day event
   timeLabel: "2pm – 3pm · UK time",
   durationMins: 60,
-  joinUrl: "",                        // Teams link, added to the calendar invite
-  // Where registrations are POSTed as JSON (HubSpot / Formspree / Make / Zapier webhook).
-  // Left empty, the form validates and shows the thank-you state but SENDS NOTHING.
-  formEndpoint: ""
+  // Teams joining link: shown after registering and put in the calendar invite. MUST be set before launch.
+  joinUrl: "",
+  reminderMins: 30                    // calendar alert this long before the start
 };
+// Registrations are saved by Netlify Forms (see the form's data-netlify attribute).
+// On localhost nothing is sent; the thank-you step still shows so the flow can be tested.
 
 (function(){
   document.querySelectorAll('[data-ev="date"]').forEach(el=>el.textContent=EVENT.dateLabel);
@@ -497,19 +494,25 @@ const EVENT = {
   const card = document.getElementById('register');
   const err  = document.getElementById('formErr');
   const btn  = form.querySelector('button[type="submit"]');
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
+  const joinBtn = document.getElementById('joinBtn');
+  if(EVENT.joinUrl){
+    joinBtn.href = EVENT.joinUrl;
+  }else{
+    // No link yet: don't promise one on screen
+    joinBtn.hidden = true;
+    document.getElementById('formFoot').textContent = 'Free · Online · Microsoft Teams';
+    document.getElementById('thanksMsg').innerHTML = 'Add the webinar to your calendar so you don\'t miss it on <span>'+EVENT.dateLabel+'</span>. We\'ll email your Teams joining link before we go live.';
+  }
   form.addEventListener('submit', async e=>{
     e.preventDefault();
     err.classList.remove('show');
     if(!form.reportValidity()) return;
-    const data = Object.fromEntries(new FormData(form));
-    data.consent = true;
-    data.consent_text = form.querySelector('.consent span').innerText.trim();
-    data.submitted_at = new Date().toISOString();
-    data.event = EVENT.title;
+    form.consent_text.value = form.querySelector('.consent span').innerText.trim();
     btn.disabled = true;
     try{
-      if(EVENT.formEndpoint){
-        const r = await fetch(EVENT.formEndpoint, {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify(data)});
+      if(!local){
+        const r = await fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(new FormData(form)).toString()});
         if(!r.ok) throw new Error(r.status);
       }
       card.classList.add('done');
@@ -536,8 +539,10 @@ const EVENT = {
       allDay ? 'DTSTART;VALUE=DATE:'+ymd(s) : 'DTSTART:'+fmt(s),
       allDay ? 'DTEND;VALUE=DATE:'+ymd(new Date(s.getTime()+86400000)) : 'DTEND:'+fmt(e),
       'SUMMARY:'+EVENT.title,
-      'DESCRIPTION:Free live webinar for Shopify subscription brands\\, hosted by Delta Fulfilment × Shopify.'+(EVENT.joinUrl?'\\nJoin: '+EVENT.joinUrl:''),
+      'DESCRIPTION:A Delta Connect session with Shopify.'+(EVENT.joinUrl?'\\n\\nJoin on Microsoft Teams: '+EVENT.joinUrl:'\\n\\nThe Teams joining link will be emailed before the session.'),
       'LOCATION:'+(EVENT.joinUrl||'Online · Microsoft Teams'),
+      ...(EVENT.joinUrl ? ['URL:'+EVENT.joinUrl] : []),
+      'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+EVENT.title,'TRIGGER:-PT'+EVENT.reminderMins+'M','END:VALARM',
       'END:VEVENT','END:VCALENDAR'
     ].join('\r\n');
     const a = document.createElement('a');
