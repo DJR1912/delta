@@ -179,9 +179,12 @@ form{padding:22px 30px 26px}
   .cobrand .lab{display:none}
 }
 @media(max-width:560px){
+  /* phones: one header row (Delta Connect LIVE); partners shown lower down */
   .hero__top{padding-top:20px}
-  .hero__grid{padding-top:30px}
-  .with-shopify{font-size:11px;letter-spacing:.08em;margin-bottom:20px}
+  .hero__top .cobrand{display:none}
+  .hero__grid{padding-top:26px}
+  .with-shopify{font-size:11px;letter-spacing:.08em;margin-bottom:18px;padding-left:14px}
+  .with-shopify .dot,.with-shopify .lw{display:none}
   .with-shopify img{height:20px}
   .when{width:100%;gap:14px;padding:12px 16px 12px 12px}
   .when__tile{width:66px}
@@ -207,16 +210,16 @@ form{padding:22px 30px 26px}
 .spt__ic svg{width:22px;height:22px;stroke:#06210f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .spt h3{font-size:20px;letter-spacing:-.01em}
 .spt p{margin-top:5px;font-size:15.5px;color:var(--ink-2)}
-.swipe-hint{display:none}
 @media(max-width:920px){
   .shopify__grid{grid-template-columns:1fr}
-  /* phones/tablets: swipeable cards instead of a stacked list */
-  .shopify__pts{display:grid;grid-auto-flow:column;grid-auto-columns:min(78%,320px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(-1 * var(--pad));padding:4px var(--pad) 18px;scroll-padding-inline:var(--pad);scrollbar-width:none}
-  .shopify__pts::-webkit-scrollbar{display:none}
-  .spt{flex-direction:column;gap:16px;scroll-snap-align:start;padding:24px 22px}
-  .spt h3{font-size:21px}
-  .swipe-hint{display:flex;align-items:center;gap:8px;margin-top:4px;font:500 11.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-  .swipe-hint svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2}
+  /* phones/tablets: the three points sit in one grouped card, not separate boxes */
+  .shopify__pts{gap:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+  .spt{background:none;border:none;border-radius:0;box-shadow:none;padding:20px 20px;gap:16px}
+  .spt + .spt{border-top:1px solid var(--line-2)}
+  .spt__ic{width:40px;height:40px;border-radius:11px}
+  .spt__ic svg{width:20px;height:20px}
+  .spt h3{font-size:18px}
+  .spt p{font-size:15px}
 }
 
 /* ========== TOPICS (timeline) ========== */
@@ -344,7 +347,7 @@ form{padding:22px 30px 26px}
 
   <div class="hero__grid">
     <div class="hero__copy">
-      <span class="with-shopify"><i class="dot"></i>Live webinar with <img src="assets/shopify-logo-white.png" alt="Shopify"></span>
+      <span class="with-shopify"><i class="dot"></i><span><span class="lw">Live </span>webinar with</span> <img src="assets/shopify-logo-white.png" alt="Shopify"></span>
       <h1>Black Friday buyers to <span class="g">lifetime subscribers.</span></h1>
       <p class="hero__sub">What Shopify sees working for subscription brands this peak, and a practical plan to keep the customers Black Friday brings in.</p>
       <div class="when">
@@ -432,9 +435,7 @@ form{padding:22px 30px 26px}
       <div class="spt reveal"><span class="spt__ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><div><h3>Real Shopify data</h3><p>Fresh insight from Shopify on subscription brands this peak, not last year's averages.</p></div></div>
       <div class="spt reveal"><span class="spt__ic"><svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span><div><h3>Retention, not just revenue</h3><p>How brands turn one-off Black Friday buyers into subscribers who stay.</p></div></div>
       <div class="spt reveal"><span class="spt__ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 9h8M8 13h5"/></svg></span><div><h3>Ask Shopify live</h3><p>Bring your questions. The session ends with an open Q&amp;A with Hannah.</p></div></div>
-    </div>
-    <span class="swipe-hint" aria-hidden="true">Swipe <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-  </div>
+    </div>  </div>
 </section>
 
 <!-- ============ TOPICS ============ -->
